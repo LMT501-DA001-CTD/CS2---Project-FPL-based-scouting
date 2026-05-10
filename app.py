@@ -135,21 +135,21 @@ def render_home():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🔍 Player Explorer", use_container_width=True, height=150):
+        if st.button("🔍 Player Explorer", use_container_width=True):
             st.session_state.previous_page = st.session_state.page
             st.session_state.page = 'Player Explorer'
             st.rerun()
         st.markdown("Browse and filter players by club, position, age, and market value")
     
     with col2:
-        if st.button("🎯 Advanced Scouting", use_container_width=True, height=150):
+        if st.button("🎯 Advanced Scouting", use_container_width=True):
             st.session_state.previous_page = st.session_state.page
             st.session_state.page = 'Advanced Scouting'
             st.rerun()
         st.markdown("Find players matching specific skill profiles and tactical requirements")
     
     with col3:
-        if st.button("💰 Player Valuation", use_container_width=True, height=150):
+        if st.button("💰 Player Valuation", use_container_width=True):
             st.session_state.previous_page = st.session_state.page
             st.session_state.page = 'Player Valuation'
             st.rerun()
@@ -202,7 +202,7 @@ def render_player_dashboard(player_id):
         st.markdown(f"**Name:** {player['name']}")
         st.markdown(f"**Age:** {calculate_age(player['date_of_birth'])}")
         st.markdown(f"**Height:** {player['height_in_cm']} cm")
-        st.markdown(f"**Club:** {player['club_name']}")
+        st.markdown(f"**Club:** {player['current_club_name']}")
         st.markdown(f"**Position:** {player['sub_position']} ({player['position']})")
         st.markdown(f"**Nationality:** {player['country_of_citizenship']}")
         st.markdown(f"**Preferred Foot:** {player['foot']}")
@@ -378,7 +378,7 @@ def render_player_explorer():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        clubs = sorted(player_info['club_name'].unique())
+        clubs = sorted(player_info['current_club_name'].unique())
         selected_clubs = st.multiselect("Club", clubs, key="explorer_club")
     
     with col2:
@@ -399,7 +399,7 @@ def render_player_explorer():
     filtered_info = player_info.copy()
     
     if selected_clubs:
-        filtered_info = filtered_info[filtered_info['club_name'].isin(selected_clubs)]
+        filtered_info = filtered_info[filtered_info['current_club_name'].isin(selected_clubs)]
     
     if selected_positions:
         filtered_info = filtered_info[filtered_info['position'].isin(selected_positions)]
@@ -440,7 +440,7 @@ def render_player_explorer():
     merged['composite_rating'] = merged['composite_rating'].fillna(0)
     
     # Display table
-    display_df = merged[['player_id', 'web_name', 'name', 'club_name', 'age', 
+    display_df = merged[['player_id', 'web_name', 'name', 'current_club_name', 'age', 
                          'market_value_in_eur', 'composite_rating', 'position']].copy()
     display_df['Player'] = display_df.apply(
         lambda x: x['web_name'] if pd.notna(x['web_name']) else x['name'], axis=1
@@ -448,8 +448,8 @@ def render_player_explorer():
     display_df['Market Value'] = display_df['market_value_in_eur'].apply(format_market_value)
     display_df['Overall Rating'] = display_df['composite_rating'].round(1)
     
-    display_df = display_df[['Player', 'club_name', 'age', 'Market Value', 'Overall Rating']]
-    display_df = display_df.rename(columns={'club_name': 'Club', 'age': 'Age'})
+    display_df = display_df[['Player', 'current_club_name', 'age', 'Market Value', 'Overall Rating']]
+    display_df = display_df.rename(columns={'current_club_name': 'Club', 'age': 'Age'})
     
     st.markdown("### Players")
     
@@ -498,7 +498,7 @@ def render_player_explorer():
         
         # Example: Top Scorers
         if selected_analysis == "Top Scorers":
-            top_scorers = merged.nlargest(10, 'goals_scored')[['name', 'age', 'position', 'club_name', 'goals_scored', 'minutes']]
+            top_scorers = merged.nlargest(10, 'goals_scored')[['name', 'age', 'position', 'current_club_name', 'goals_scored', 'minutes']]
             st.dataframe(top_scorers, use_container_width=True)
             
             fig = px.bar(top_scorers, x='name', y='goals_scored', title="Top 10 Scorers")
@@ -517,7 +517,7 @@ def render_watchlist():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        player_options = player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['club_name']})", axis=1)
+        player_options = player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['current_club_name']})", axis=1)
         selected_player = st.selectbox("Select Player", player_options.tolist(), key="add_watchlist_player")
     
     with col2:
@@ -528,7 +528,7 @@ def render_watchlist():
     
     with col4:
         if st.button("Add", key="add_watchlist_btn"):
-            player_row = player_info[player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['club_name']})", axis=1) == selected_player]
+            player_row = player_info[player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['current_club_name']})", axis=1) == selected_player]
             if not player_row.empty:
                 player_id = str(player_row.iloc[0]['player_id'])
                 if player_id not in watchlist:
@@ -561,7 +561,7 @@ def render_watchlist():
         selected_pos = st.multiselect("Position", positions, key="filter_position")
     
     with col3:
-        clubs = sorted(player_info['club_name'].unique())
+        clubs = sorted(player_info['current_club_name'].unique())
         selected_clubs = st.multiselect("Club", clubs, key="filter_club")
     
     # Display watchlist
@@ -580,14 +580,14 @@ def render_watchlist():
                 continue
             if selected_pos and player['position'] not in selected_pos:
                 continue
-            if selected_clubs and player['club_name'] not in selected_clubs:
+            if selected_clubs and player['current_club_name'] not in selected_clubs:
                 continue
             
             col1, col2 = st.columns([3, 1])
             
             with col1:
                 st.markdown(f"#### {player['web_name'] if pd.notna(player['web_name']) else player['name']}")
-                st.write(f"**Club:** {player['club_name']} | **Position:** {player['position']}")
+                st.write(f"**Club:** {player['current_club_name']} | **Position:** {player['position']}")
                 
                 # Display tags
                 if entry.get('tags'):
@@ -652,7 +652,7 @@ def render_advanced_scouting():
         st.markdown("### Search Criteria")
         
         # League (placeholder - only one league in our data)
-        leagues = player_info['club_name'].unique()
+        leagues = player_info['current_club_name'].unique()
         if len(leagues) == 1:
             st.text(f"League: {leagues[0]}")
         else:
@@ -765,7 +765,7 @@ def render_advanced_scouting():
                         st.session_state.page = 'Player Dashboard'
                         st.rerun()
                     
-                    cols[2].write(row['club_name'])
+                    cols[2].write(row['current_club_name'])
                     cols[3].write(row['position'])
                     cols[4].write(calculate_age(row['date_of_birth']))
                     cols[5].write(f"{format_market_value(row['market_value_in_eur'])}")
@@ -782,11 +782,11 @@ def render_player_valuation():
     player_stats, player_info = load_data()
     
     # Player selection
-    player_options = player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['club_name']})", axis=1)
+    player_options = player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['current_club_name']})", axis=1)
     selected_player_name = st.selectbox("Select Player", player_options.tolist())
     
     if selected_player_name:
-        player_row = player_info[player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['club_name']})", axis=1) == selected_player_name]
+        player_row = player_info[player_info.apply(lambda x: f"{x['web_name'] if pd.notna(x['web_name']) else x['name']} ({x['current_club_name']})", axis=1) == selected_player_name]
         
         if not player_row.empty:
             player = player_row.iloc[0]
@@ -902,7 +902,7 @@ def render_player_valuation():
         cols = st.columns(6)
         player_name = row['web_name'] if pd.notna(row['web_name']) else row['name']
         cols[0].markdown(f"**{player_name}**")
-        cols[1].write(row['club_name'])
+        cols[1].write(row['current_club_name'])
         cols[2].write(row['position'])
         cols[3].write(format_market_value(row['market_value_in_eur']))
         cols[4].write(f"{row['value_rating']:.2f}")
