@@ -1,0 +1,16 @@
+player_id,name,position,sub_position,foot,height_in_cm,date_of_birth,current_club_name,market_value_in_eur,highest_market_value_in_eur,contract_expiration_date,international_caps,international_goals,country_of_citizenship
+1,Erling Haaland,Forward,Striker,Left,194,2000-07-21,Manchester City,180000000,200000000,2027-06-30,29,28,Norway
+2,Kevin De Bruyne,Midfielder,Central Midfield,Right,181,1991-06-28,Manchester City,75000000,150000000,2025-06-30,98,26,Belgium
+3,Alisson Becker,Goalkeeper,Goalkeeper,Right,191,1992-10-02,Liverpool,45000000,90000000,2027-06-30,62,0,Brazil
+4,Mohamed Salah,Forward,Right Winger,Left,175,1992-06-15,Liverpool,65000000,150000000,2025-06-30,92,54,Egypt
+5,Virgil van Dijk,Defender,Centre-Back,Right,193,1991-07-08,Liverpool,40000000,90000000,2025-06-30,56,7,Netherlands
+6,Bruno Fernandes,Midfielder,Attacking Midfield,Right,179,1994-09-08,Manchester United,70000000,100000000,2026-06-30,63,16,Portugal
+7,Harry Kane,Forward,Striker,Right,188,1993-07-28,Bayern Munich,100000000,120000000,2027-06-30,89,63,England
+8,William Saliba,Defender,Centre-Back,Right,192,2001-03-24,Arsenal,80000000,80000000,2027-06-30,16,1,France
+9,Bukayo Saka,Forward,Right Winger,Left,178,2001-09-05,Arsenal,120000000,140000000,2027-06-30,33,11,England
+10,Martin Ødegaard,Midfielder,Attacking Midfield,Left,178,1998-12-17,Arsenal,110000000,110000000,2028-06-30,53,9,Norway
+11,Son Heung-min,Forward,Left Winger,Right,183,1992-07-08,Tottenham,50000000,100000000,2025-06-30,121,44,South Korea
+12,Ruben Dias,Defender,Centre-Back,Right,187,1997-05-14,Manchester City,75000000,100000000,2027-06-30,51,4,Portugal
+13,Phil Foden,Midfielder,Left Winger,Left,171,2000-05-28,Manchester City,150000000,150000000,2027-06-30,36,4,England
+14,Ederson Moraes,Goalkeeper,Goalkeeper,Left,188,1993-08-17,Manchester City,40000000,60000000,2026-06-30,25,0,Brazil
+15,James Maddison,Midfielder,Attacking Midfield,Right,175,1996-11-23,Tottenham,55000000,70000000,2028-06-30,5,1,England
