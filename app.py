@@ -95,13 +95,18 @@ class DataLoader:
         if 'player_id' not in stats.columns:
             stats['player_id'] = stats['id']
         
-        merged = stats.merge(info, on='player_id', how='left')
+        # Remove web_name from stats before merge to avoid duplication
+        stats_to_merge = stats.copy()
+        if 'web_name' in stats_to_merge.columns:
+            stats_to_merge = stats_to_merge.drop(columns=['web_name'])
+        
+        merged = stats_to_merge.merge(info, on='player_id', how='left')
         
         # Fill missing web_name with name
-        if 'web_name' in merged.columns:
-            merged['web_name'] = merged['web_name'].fillna(merged['name'])
-        else:
+        if 'web_name' not in merged.columns and 'name' in merged.columns:
             merged['web_name'] = merged['name']
+        elif 'web_name' in merged.columns and 'name' in merged.columns:
+            merged['web_name'] = merged['web_name'].fillna(merged['name'])
         
         return merged
     
@@ -499,15 +504,15 @@ def render_home():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🔍 Player Explorer\nExplore and filter players", use_container_width=True, height=150):
+        if st.button("🔍 Player Explorer\nExplore and filter players", use_container_width=True):
             navigate_to("Player Explorer")
     
     with col2:
-        if st.button("🎯 Advanced Scouting\nFind players by skills", use_container_width=True, height=150):
+        if st.button("🎯 Advanced Scouting\nFind players by skills", use_container_width=True):
             navigate_to("Advanced Scouting")
     
     with col3:
-        if st.button("💰 Player Valuation\nAnalyze market values", use_container_width=True, height=150):
+        if st.button("💰 Player Valuation\nAnalyze market values", use_container_width=True):
             navigate_to("Player Valuation")
 
 
